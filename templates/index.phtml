@@ -1,0 +1,142 @@
+<?php
+/* @var array $data */
+/* @var string $error */
+/* @var int $request_id */
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>E-Tickets Test</title>
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css" rel="stylesheet" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+    </head>
+    <body>
+
+        <div class="container">
+            <h1>E-Tickets Test</h1>
+
+            <form id="ui-form-search" class="smart-form" action="/" method="post">
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label for="original_location" class="col-form-label">Original location</label>
+                        <select class="form-control" name="original_location" id="original_location">
+                            <?php foreach ($cities as $city): ?>
+                                <?php if ($data['original_location'] == $city): ?>
+                                    <option value="<?=$city?>" selected><?=$city?></option>
+                                <?php else: ?>
+                                    <option value="<?=$city?>"><?=$city?></option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label for="destination_location" class="col-form-label">Destination location</label>
+                        <select class="form-control" name="destination_location" id="destination_location">
+                            <?php foreach ($cities as $city): ?>
+                                <?php if ($data['destination_location'] == $city): ?>
+                                    <option value="<?=$city?>" selected><?=$city?></option>
+                                <?php else: ?>
+                                    <option value="<?=$city?>"><?=$city?></option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        <label for="departure_datetime" class="col-form-label">Departure Date</label>
+                        <input
+                            class="form-control ui-date"
+                            type="date"
+                            name="departure_datetime"
+                            id="departure_datetime"
+                            required="required"
+                            value="<?=$data['departure_datetime'] ?: date('Y-m-d')?>"
+                        >
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        <label for="passangers_quantity" class="col-form-label">Passangers quantity</label>
+                        <input
+                            class="form-control"
+                            type="number"
+                            value="<?=$data['passangers_quantity'] ?: 1?>"
+                            name="passangers_quantity"
+                            id="passangers_quantity"
+                            required="required"
+                            min="1"
+                        >
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        <label class="col-form-label">&nbsp;</label>
+                        <input class="form-control btn btn-primary" type="submit" value="Search" id="ui-add-block-btn">
+                    </div>
+                </div>
+
+            </form>
+
+            <div class="alert alert-danger" id="ui-error-block" style="<?php if (!$error): ?>display:none<?php endif; ?>">
+                <strong>Error!</strong> <span id="ui-error"><?=htmlspecialchars($error)?></span>
+            </div>
+
+            <?php if ($request_id): ?>
+                <div class="alert alert-info" id='ui-search-info'>Please, wait ))</div>
+                <div id='ui-search-result'></div>
+            <?php endif; ?>
+        </div>
+
+        <script type="text/javascript">
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $(function() {
+                $(".ui-date").datepicker({
+                    dateFormat: "yy-mm-dd"
+                });
+            });
+
+            $(document).ready(function () {
+                $.fn.select2.defaults.set( "theme", "bootstrap" );
+                $('#original_location').select2();
+                $('#destination_location').select2();
+
+                if (<?=$request_id?'false':'true'?>) {
+                    return;
+                }
+                $.post('/ajax/results/<?=$request_id?>', function(data) {
+                    $('#ui-search-info').hide();
+                    if (data['status'] == 'error') {
+                        $('#ui-error').text(data['error']);
+                        $('#ui-error-block').show();
+                        return;
+                    }
+                    $('#ui-search-result').html(data['response']);
+                }).fail(function() {
+                    console.log('error');
+                });
+            });
+        </script>
+
+    </body>
+</html>

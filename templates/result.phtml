@@ -1,0 +1,142 @@
+<?php
+/* @var \Libs\Cities $cities */
+/* @var stdClass $data */
+?>
+<?php if (isset($data->FareDisplayInfos) && (count($data->FareDisplayInfos) > 0)): ?>
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Flight</th>
+                <th>Departure -> Arrival</th>
+                <th>Duration</th>
+                <th>Cost</th>
+            </tr>
+            <?php foreach ($data->FareDisplayInfos as $index => $fare): ?>
+                <tr>
+                    <td>
+                        <?php if (isset($fare->Segments->Legs->OperatingAirlineCode)): ?>
+                            <?php if (isset($fare->Segments->Legs->ValidatingAirlineURL)): ?>
+                                <img src="<?=$fare->Segments->Legs->ValidatingAirlineURL?>" />
+                            <?php endif; ?>
+                            <?php if (isset($fare->Segments->Legs->OperatingAirlineCode)): ?>
+                                <?=$fare->Segments->Legs->OperatingAirlineCode?>
+                            <?php endif; ?>
+                            <?php if (isset($fare->Segments->Legs->FlightNumber)): ?>
+                                <?=$fare->Segments->Legs->FlightNumber?>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <?php foreach ($fare->Segments->Legs as $i => $legs): ?>
+                                <?php if ($i == 1): ?>
+                                    <?php if (isset($legs->ValidatingAirlineURL)): ?>
+                                        <img src="<?=$legs->ValidatingAirlineURL?>" />
+                                    <?php endif; ?>
+                                    <?php if (isset($legs->OperatingAirlineCode)): ?>
+                                        <?=$legs->OperatingAirlineCode?>
+                                    <?php endif; ?>
+                                    <?php if (isset($legs->FlightNumber)): ?>
+                                        <?=$legs->FlightNumber?>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if (isset($fare->Segments->Legs->OperatingAirlineCode)): ?>
+                            <?php if (isset($fare->Segments->Legs->DepartureDate)): ?>
+                                <?=$fare->Segments->Legs->DepartureDate?>
+                            <?php endif; ?>
+                            <?php if (isset($fare->Segments->Legs->DepartureTime)): ?>
+                                <?=$fare->Segments->Legs->DepartureTime?>
+                            <?php endif; ?>
+                            <?php
+                                if (
+                                    isset($fare->Segments->Legs->DepartureCityCode) &&
+                                    (isset($cities->getCityByCode($fare->Segments->Legs->ArrivalCityCode)['name']))
+                                ):
+                            ?>
+                                <?=$cities->getCityByCode($fare->Segments->Legs->DepartureCityCode)['name']?>
+                            <?php endif; ?>
+                            (
+                            <?php if (isset($fare->Segments->Legs->DepartureAirportCode)): ?>
+                                <?=$fare->Segments->Legs->DepartureAirportCode?>
+                            <?php endif; ?>
+                            )
+                            ->
+                            <?php if (isset($fare->Segments->Legs->ArrivalDate)): ?>
+                                <?=$fare->Segments->Legs->ArrivalDate?>
+                            <?php endif; ?>
+                            <?php if (isset($fare->Segments->Legs->ArrivalTime)): ?>
+                                <?=$fare->Segments->Legs->ArrivalTime?>
+                            <?php endif; ?>
+                            <?php
+                                if (
+                                    isset($fare->Segments->Legs->ArrivalCityCode) &&
+                                    (isset($cities->getCityByCode($fare->Segments->Legs->ArrivalCityCode)['name']))
+                                ):
+                            ?>
+                                <?=$cities->getCityByCode($fare->Segments->Legs->ArrivalCityCode)['name']?>
+                            <?php endif; ?>
+                            (
+                            <?php if (isset($fare->Segments->Legs->ArrivalAirportCode)): ?>
+                            <?=$fare->Segments->Legs->ArrivalAirportCode?>
+                            <?php endif; ?>
+                            )
+                        <?php else: ?>
+                            <?php foreach ($fare->Segments->Legs as $i => $legs): ?>
+                                <?=++$i?>
+                                .
+                                <?php if (isset($legs->DepartureDate)): ?>
+                                    <?=$legs->DepartureDate?>
+                                <?php endif; ?>
+                                <?php if (isset($legs->DepartureTime)): ?>
+                                    <?=$legs->DepartureTime?>
+                                <?php endif; ?>
+                                <?php if (isset($legs->DepartureCityCode) && (isset($cities->getCityByCode($legs->DepartureCityCode)['name']))): ?>
+                                    <?=$cities->getCityByCode($legs->DepartureCityCode)['name']?>
+                                <?php endif; ?>
+                                (
+                                <?php if (isset($legs->DepartureAirportCode)): ?>
+                                    <?=$legs->DepartureAirportCode?>
+                                <?php endif; ?>
+                                )
+                                ->
+                                <?php if (isset($legs->ArrivalDate)): ?>
+                                    <?=$legs->ArrivalDate?>
+                                <?php endif; ?>
+                                <?php if (isset($legs->ArrivalTime)): ?>
+                                    <?=$legs->ArrivalTime?>
+                                <?php endif; ?>
+                                <?php if (isset($legs->ArrivalCityCode) && (isset($cities->getCityByCode($legs->ArrivalCityCode)['name']))): ?>
+                                    <?=$cities->getCityByCode($legs->ArrivalCityCode)['name']?>
+                                <?php endif; ?>
+                                (
+                                <?php if (isset($legs->ArrivalAirportCode)): ?>
+                                    <?=$legs->ArrivalAirportCode?>
+                                <?php endif; ?>
+                                )
+                                <br />
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if (isset($fare->Segments->Duration)): ?>
+                            <?=$fare->Segments->Duration?>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if (isset($fare->Fares->Total)): ?>
+                            <?=$fare->Fares->Total?>
+                        <?php endif; ?>
+                        <?php if (isset($fare->Fares->Currency)): ?>
+                            <?=$fare->Fares->Currency?>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php else: ?>
+    <div class="container">
+        <div class="alert alert-warning"><strong>Sorry,</strong> no results received. Try other conditions.</div>
+    </div>
+<?php endif; ?>
