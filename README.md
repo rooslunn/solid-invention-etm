@@ -33,6 +33,6 @@ That's it! Now go build something cool.
 1. Change end-point to https://soap.etm-system.ru/.
 2. Generate new certs. Manual [here](https://bitbucket.org/etm-v/etm-php-challenge/downloads/ETM%20system%20Certificate%20Request%20Form%20v0.3.pdf).
 3. Run.
-4. Cover code with unit tests.
+4. *Main objective* Cover code with unit tests.
 5. Refactor code if needed.
-6. Publish code yo public repo.
+6. Publish code to public repo.
