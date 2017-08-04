@@ -24,3 +24,15 @@ Run this command to run the test suite
 	php composer.phar test
 
 That's it! Now go build something cool.
+
+## Challenge
+
+* Certs are available here -- . Pass to container: 123456zZ
+* login/pass/hashkey - test1/7mkn6XC9L54p/b2cbf0f711
+
+1. Change end-point to https://soap.etm-system.ru/.
+2. Generate new certs. Manual here -- 
+3. Run.
+4. Cover code with unit tests.
+5. Refactor code if needed.
+6. Publish code yo public repo.
